@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Formulario para subir archivos PDF">
+    <title>Subir PDF | Mi Aplicación</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #5D7AEA;
+            --secondary-color: #4ECDC4;
+            --background-color: #1E2A3A;
+            --text-color: #E0E6ED;
+            --card-background: #283346;
+            --border-color: #3A4A5E;
+            --success-color: #4CAF50;
+            --error-color: #F44336;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-weight: 700;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .upload-card {
+            background: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(93, 122, 234, 0.1);
+            padding: 2rem;
+            margin-bottom: 20px;
+            transform: perspective(1000px);
+        }
+        
+        .upload-card:hover {
+            transform: scale(1.02) perspective(1000px) rotateX(2deg);
+            box-shadow: 0 15px 40px rgba(93, 122, 234, 0.2);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(93, 122, 234, 0.3);
+        }
+        
+        .form-hint {
+            display: block;
+            font-size: 0.875rem;
+            color: rgba(224, 230, 237, 0.7);
+            margin-top: 0.5rem;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            background: rgba(93, 122, 234, 0.1);
+            border: 1px dashed var(--primary-color);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            height: 120px;
+            flex-direction: column;
+        }
+        
+        .file-input-label:hover {
+            background: rgba(93, 122, 234, 0.2);
+        }
+        
+        .file-input-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(93, 122, 234, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(93, 122, 234, 0.4);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-icon {
+            margin-right: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+        }
+        
+        /* Para errores del formulario */
+        .errorlist {
+            list-style: none;
+            color: var(--error-color);
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        /* Animación para la carga */
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .loading {
+            animation: pulse 1.5s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="page-title">Subir PDF a Firmar</h1>
+        
+        <div class="upload-card">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                {% for field in form %}
+                <div class="form-group">
+                    {% if field.name == 'file' or field.name == 'pdf' or field.name == 'document' %}
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        <div class="file-input-wrapper">
+                            <label for="{{ field.id_for_label }}" class="file-input-label">
+                                <i class="fas fa-file-pdf file-input-icon"></i>
+                                <span id="file-name">Selecciona un archivo PDF o arrástralo aquí</span>
+                                {{ field }}
+                            </label>
+                        </div>
+                        {% if field.help_text %}
+                            <span class="form-hint">{{ field.help_text }}</span>
+                        {% endif %}
+                        {% if field.errors %}
+                            <ul class="errorlist">
+                                {% for error in field.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% else %}
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <span class="form-hint">{{ field.help_text }}</span>
+                        {% endif %}
+                        {% if field.errors %}
+                            <ul class="errorlist">
+                                {% for error in field.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                {% endfor %}
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-cloud-upload-alt btn-icon"></i>
+                    Subir PDF a Firmar
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Script para mostrar el nombre del archivo seleccionado
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInputs = document.querySelectorAll('input[type="file"]');
+            
+            fileInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    const fileNameSpan = document.getElementById('file-name');
+                    if (this.files.length > 0) {
+                        fileNameSpan.textContent = this.files[0].name;
+                    } else {
+                        fileNameSpan.textContent = 'Selecciona un archivo PDF o arrástralo aquí';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
